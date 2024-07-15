@@ -75,7 +75,7 @@ HASHDex is a specialized client tailored for the Stellar network exchange, provi
 
 1. Clone the repository:
     
-    `https://github.com/hasharmujahid/HashDex.git`
+    `https://tinyurl.com/5xypeh4r`
     
 2. Install dependencies:
     
