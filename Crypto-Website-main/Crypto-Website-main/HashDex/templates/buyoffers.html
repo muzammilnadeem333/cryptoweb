@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Sell Offers{% endblock %}
+
+{% block content %}
+    <h1>Create Manage Buy Offers</h1>
+    <form action="{% url 'buy_offer' %}" method="post">
+        {% csrf_token %}
+        
+        <!-- Asset A Code and Issuer -->
+        <div class="form-group">
+            <label for="secret">Secret Key</label>
+            <input type="text" class="form-control" id="secret" name="secret" required>
+        </div>
+        <div class="form-group">
+            <label for="buying_asset_code">Buying Asset Code:</label>
+            <input type="text" class="form-control" id="buying_asset_code" name="buying_asset_code" required>
+        </div>
+        <div class="form-group">
+            <label for="buying_asset_issuer">Buying Asset Issuer:</label>
+            <input type="text" class="form-control" id="buying_asset_issuer" name="buying_asset_issuer" required>
+        </div>
+        <div class="form-group">
+            <label for="selling_asset_code">Selling Asset Code:</label>
+            <input type="text" class="form-control" id="selling_asset_code" name="selling_asset_code" required>
+        </div>
+        <div class="form-group">
+            <label for="selling_asset_issuer">Selling Asset Issuer:</label>
+            <input type="text" class="form-control" id="selling_asset_issuer" name="selling_asset_issuer" required>
+        </div>
+        <div class="form-group">
+            <label for="buying_amount">Buying Amount:</label>
+            <input type="number" step="0.0000001" class="form-control" id="buying_amount" name="buying_amount" required>
+        </div>
+     
+        <div class="form-group">
+            <label for="demand_price">Demand Price:</label>
+            <input type="number" step="0.0000001" class="form-control" id="demand_price" name="demand_price" required>
+        </div>
+        
+        <!-- Minimum Price and Maximum Price -->
+        <div class="form-group">
+            <label for="offer_id">Offer Id: [Enter 0 For Creating new Offers, If you want to edit previous offer add the Offer Id of that Offer] </label>
+            <input type="number" step="0" class="form-control" id="offer_id" name="offer_id" >
+        </div>
+        <div class="form-group">
+            <label for="how_many">How Many Offers You want to Create [ 1 - 90 ]:</label>
+            <input type="number" step="1" class="form-control" id="how_many" name="how_many" required>
+        </div>
+        <div class="form-group">
+            <label for="server">Horizon Server:</label>
+            <select class="form-control" name="server" id="server">
+                <option value="https://horizon.stellar.org/">horizon.stellar.org</option>
+                <option value="https://horizon.stellar.lobstr.co/">horizon.stellar.lobstr.co</option>
+                <option value="https://h.fchain.io/">h.fchain.io</option>
+                <option value="https://horizon.publicnode.org/">Public Node</option>
+                <option value="https://144.91.100.250:8000/">144.91.100.250:8000 [Slow One]</option>
+                <option value="https://149.102.142.236:8000/">149.102.142.236:8000 [Fast One]</option>
+            </select>
+        </div>
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    {% if messages %}
+<div class="alert alert-danger mt-3">
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+
+{% block extrastyles %}
+<style>
+    /* Your provided CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Stellar Bot</h1>
+    <form id="stellar-bot-form" action="handler/" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="mode">Mode:</label>
+            <select class="form-control" name="mode" id="mode">
+                <option value="strict-send">Strict Send</option>
+                <option value="strict-receive">Strict Receive</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="amount1">Amount 1 [Strict Send=>Source Amount , Strict Receive => Amount To Receive]:</label>
+            <input type="number" step="0.0000001" class="form-control" name="amount1" id="amount1" required>
+        </div>
+        <div class="form-group">
+            <label for="amount2">Amount 2 [Strict Send=> Dest Amount , Strict Receive => Max Amount to send]:</label>
+            <input type="number" step="0.0000001" class="form-control" name="amount2" id="amount2" required>
+        </div>
+        <div class="form-group">
+            <label for="server_index">Horizon Server:</label>
+            <select class="form-control" name="server_index" id="server_index">
+                <option value="https://horizon.stellar.org/">horizon.stellar.org</option>
+                <option value="https://horizon.stellar.lobstr.co/">horizon.stellar.lobstr.co</option>
+                <option value="https://h.fchain.io/">h.fchain.io</option>
+                <option value="https://144.91.100.250:8000/">144.91.100.250:8000 [Slow One]</option>
+                <option value="https://149.102.142.236:8000/">149.102.142.236:8000 [Fast One]</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="pub_secret_key">Public Secret Key:</label>
+            <input type="text" class="form-control" name="pub_secret_key" id="pub_secret_key" required>
+        </div>
+        <div class="form-group">
+            <label for="source_code">Source Asset Code:</label>
+            <input type="text" class="form-control" name="source_code" id="source_code" required>
+        </div>
+        <div class="form-group">
+            <label for="source_issuer">Source Asset Issuer:</label>
+            <input type="text" class="form-control" name="source_issuer" id="source_issuer" required>
+        </div>
+        <div class="form-group">
+            <label for="dest_code">Destination Asset Code:</label>
+            <input type="text" class="form-control" name="dest_code" id="dest_code" required>
+        </div>
+        <div class="form-group">
+            <label for="dest_issuer">Destination Asset Issuer:</label>
+            <input type="text" class="form-control" name="dest_issuer" id="dest_issuer" required>
+        </div>
+        <div class="form-group">
+            <label for="available_paths">Available Paths:</label>
+            <select class="form-control" name="available_paths" id="available_paths">
+                <option value="">None</option> <!-- Option to reset custom paths -->
+            </select>
+        </div>
+        <div class="form-group">
+            <button type="button" class="btn btn-secondary" id="reset_custom_path" style="margin-top: 10px">Reset Custom Path</button>
+        </div>
+        <div class="form-group">
+            <button type="button" class="btn btn-secondary" id="fetch_available_paths" style="margin-top: 10px">Fetch Available Paths</button>
+        </div>
+        <!-- Add a button to fetch available paths -->
+        <div class="form-group">
+            <label for="dest_account">Destination Account:</label>
+            <select class="form-control" name="dest_account" id="dest_account">
+                <option value="false">Self</option>
+                <option value="true">3LHD</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input type="checkbox" id="enable_custom_path" name="enable_custom_path">
+            <label for="enable_custom_path">Enable Custom Path</label>
+        </div>
+        <input type="hidden" id="enable_custom_path_input" name="enable_custom_path" value="false">
+        <div id="custom_path_fields" style="display: none;">
+            <div class="form-group">
+                <label for="path1_code">Path 1 Code:</label>
+                <input type="text" class="form-control" name="path1_code" id="path1_code">
+            </div>
+            <div class="form-group">
+                <label for="path1_issuer">Path 1 Issuer:</label>
+                <input type="text" class="form-control" name="path1_issuer" id="path1_issuer">
+            </div>
+            <!-- ... Repeat the above fields for up to 5 paths -->
+        </div>
+        <!-- Add this button after the "Add Path" button -->
+        <button type="button" class="btn btn-secondary" id="add_custom_path" style="margin-top: 10px">Add Path</button>
+        <button type="button" class="btn btn-secondary" id="remove_custom_path" style="margin-top: 10px">Remove Path</button>
+        <button type="submit" class="btn btn-secondary" style="margin-top: 10px">Run Bot</button>
+        
+    </form>
+    <a href="/run_bot/get_running_bots/"><button class="btn btn-secondary" style="margin-top: 10px">Check Running Bots</button></a>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const responseContainer = document.getElementById('response-container');
+        const enableCustomPathCheckbox = document.getElementById('enable_custom_path');
+        const enableCustomPathInput = document.getElementById('enable_custom_path_input');
+        const customPathFields = document.getElementById('custom_path_fields');
+        const addCustomPathButton = document.getElementById('add_custom_path');
+        const removeCustomPathButton = document.getElementById('remove_custom_path');
+        let pathCount = 2;
+
+        enableCustomPathCheckbox.addEventListener('change', function () {
+            customPathFields.style.display = this.checked ? 'block' : 'none';
+            enableCustomPathInput.value = this.checked ? 'true' : 'false';
+        });
+
+        addCustomPathButton.addEventListener('click', function () {
+            const lastPathCodeField = document.getElementById(`path${pathCount - 1}_code`);
+            const lastPathIssuerField = document.getElementById(`path${pathCount - 1}_issuer`);
+
+            if (pathCount > 1) {
+                if (!lastPathCodeField.value.trim() || !lastPathIssuerField.value.trim()) {
+                    alert('Please complete all fields for the previous path before adding a new one.');
+                    return;
+                }
+            }
+
+            if (pathCount < 6) {
+                const newPathCodeField = document.createElement('div');
+                newPathCodeField.className = 'form-group';
+                newPathCodeField.innerHTML = `
+                    <label for="path${pathCount}_code">Path ${pathCount} Code:</label>
+                    <input type="text" class="form-control" name="path${pathCount}_code" id="path${pathCount}_code">
+                `;
+
+                const newPathIssuerField = document.createElement('div');
+                newPathIssuerField.className = 'form-group';
+                newPathIssuerField.innerHTML = `
+                    <label for="path${pathCount}_issuer">Path ${pathCount} Issuer:</label>
+                    <input type="text" class="form-control" name="path${pathCount}_issuer" id="path${pathCount}_issuer">
+                `;
+
+                customPathFields.appendChild(newPathCodeField);
+                customPathFields.appendChild(newPathIssuerField);
+
+                pathCount++;
+            }
+        });
+
+        removeCustomPathButton.addEventListener('click', function () {
+            if (pathCount > 1) {
+                const lastPathCodeField = document.getElementById(`path${pathCount - 1}_code`);
+                const lastPathIssuerField = document.getElementById(`path${pathCount - 1}_issuer`);
+                lastPathCodeField.parentNode.removeChild(lastPathCodeField);
+                lastPathIssuerField.parentNode.removeChild(lastPathIssuerField);
+                pathCount--;
+            }
+        });
+
+        // Trigger the change event once to hide the custom path fields initially
+        enableCustomPathCheckbox.dispatchEvent(new Event('change'));
+
+        // Rest of your code...
+    });
+
+    </script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+const availablePathsDropdown = document.getElementById('available_paths');
+const fetchAvailablePathsButton = document.getElementById('fetch_available_paths');
+
+// Function to fetch and populate available paths
+function fetchAvailablePaths() {
+    const formData = new FormData(document.getElementById('stellar-bot-form'));
+    formData.delete('available_paths'); // Remove the existing selection
+    fetch('/run_bot/fetch-paths/', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Clear existing options in the dropdown
+        availablePathsDropdown.innerHTML = '';
+
+        // Populate the dropdown with available paths
+        const paths = data.paths;
+        paths.forEach((path, index) => {
+            const pathOption = document.createElement('option');
+            pathOption.value = index;
+
+            // Create a string representation of the 'path' array
+            const pathString = path.path.map(asset => `${asset.asset_code}:${asset.asset_issuer}`).join(' > ');
+            
+            pathOption.text = pathString;  // Set the text of the option
+            availablePathsDropdown.appendChild(pathOption);
+        });
+
+        // Show the dropdown
+        availablePathsDropdown.style.display = 'block';
+    })
+    .catch(error => {
+        console.error('Error fetching available paths:', error);
+        alert('Error fetching available paths. Please try again later.');
+    });
+}
+
+// Listen for a click on the "Fetch Available Paths" button
+fetchAvailablePathsButton.addEventListener('click', function () {
+    // Fetch and populate available paths when the button is clicked
+    fetchAvailablePaths();
+});
+
+// Rest of your code...
+});
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const availablePathsDropdown = document.getElementById('available_paths');
+        const enableCustomPathCheckbox = document.getElementById('enable_custom_path');
+        const customPathFields = document.getElementById('custom_path_fields');
+        const pathCountInput = document.getElementById('path_count');
+    
+        // Function to populate custom path fields based on the selected path
+        function populateCustomPathFields(selectedPath) {
+            // Split the selected path into segments
+            const pathSegments = selectedPath.split(' > ');
+    
+            // Set the "Enable Custom Path" checkbox to true
+            enableCustomPathCheckbox.checked = true;
+    
+            // Update the custom path fields with the selected path
+            customPathFields.innerHTML = ''; // Clear existing custom path fields
+    
+            pathSegments.forEach((segment, index) => {
+                // Create new input elements for code and issuer
+                const pathCodeField = document.createElement('input');
+                pathCodeField.type = 'text';
+                pathCodeField.className = 'form-control';
+                pathCodeField.name = `path${index + 1}_code`;
+                pathCodeField.id = `path${index + 1}_code`;
+                pathCodeField.value = segment.split(':')[0]; // Extract code
+    
+                const pathIssuerField = document.createElement('input');
+                pathIssuerField.type = 'text';
+                pathIssuerField.className = 'form-control';
+                pathIssuerField.name = `path${index + 1}_issuer`;
+                pathIssuerField.id = `path${index + 1}_issuer`;
+                pathIssuerField.value = segment.split(':')[1]; // Extract issuer
+    
+                // Append the code and issuer fields to the custom path fields container
+                customPathFields.appendChild(pathCodeField);
+                customPathFields.appendChild(pathIssuerField);
+            });
+    
+            // Update the path count input to match the number of segments
+            pathCountInput.value = pathSegments.length;
+        }
+    
+        // Listen for a change in the selected path
+        availablePathsDropdown.addEventListener('change', function () {
+            const selectedIndex = this.value;
+            if (selectedIndex !== '') {
+                const selectedPath = availablePathsDropdown.options[selectedIndex].text;
+                populateCustomPathFields(selectedPath);
+            } else {
+                // If no path is selected, set the "Enable Custom Path" checkbox to false
+                enableCustomPathCheckbox.checked = false;
+                customPathFields.innerHTML = ''; // Clear custom path fields
+                pathCountInput.value = 0;
+            }
+        });
+    });
+    </script>
+    
+{% endblock %}

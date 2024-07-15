@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Withdraw from Liquidity Pool{% endblock %}
+
+{% block content %}
+    <h1>Withdraw from Liquidity Pool</h1>
+    <form action="{% url 'withdraw_liquidity_pool' %}" method="post">
+        {% csrf_token %}
+
+        <!-- Liquidity Pool ID -->
+        <div class="form-group">
+            <label for="secret">Secret Key:</label>
+            <input type="text" class="form-control" id="secret" name="secret" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="liquidity_pool_id">Liquidity Pool ID:</label>
+            <input type="text" class="form-control" id="liquidity_pool_id" name="liquidity_pool_id" required>
+        </div>
+        <div class="form-group">
+            <label for="total_shares">Amount:</label>
+            <input type="text" class="form-control" id="total_shares" name="total_shares" required>
+        </div>
+
+        <!-- Amount for Asset A -->
+        <div class="form-group">
+            <label for="amount_asset_a">Minimum Amount for Asset A:</label>
+            <input type="number" step="0.0000001" class="form-control" id="amount_asset_a" name="amount_asset_a" required>
+        </div>
+
+        <!-- Amount for Asset B -->
+        <div class="form-group">
+            <label for="amount_asset_b">Minimum Amount for Asset B:</label>
+            <input type="number" step="0.0000001" class="form-control" id="amount_asset_b" name="amount_asset_b" required>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Withdraw</button>
+    </form>
+    {% if messages %}
+    <div class="alert alert-danger mt-3">
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+{% endblock %}

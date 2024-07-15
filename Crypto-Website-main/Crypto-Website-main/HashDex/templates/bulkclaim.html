@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Claimable Balances Processing{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Claimable Balances Processing</h2>
+  <p>Enter the details below to start the claiming process:</p>
+  
+  <form method="post" action="{% url 'process_claimable_balances' %}">
+    {% csrf_token %}
+    
+    <div class="form-group">
+      <label for="secret_key">Secret Key:</label>
+      <input type="text" class="form-control" id="secret_key" name="secret_key" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="destination_asset_code">Destination Asset Code:</label>
+      <input type="text" class="form-control" id="destination_asset_code" name="destination_asset_code" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="destination_asset_issuer">Destination Asset Issuer:</label>
+      <input type="text" class="form-control" id="destination_asset_issuer" name="destination_asset_issuer" required>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Start Claiming Process</button>
+  </form>
+</div>
+{% endblock %}

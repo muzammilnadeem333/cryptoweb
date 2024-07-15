@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Multi Operations Bots{% endblock %}
+
+{% block content %}
+<div style="text-align: center;">
+  <form method="post" action="{% url 'Multi Operational Running Bots' %}">
+    {% csrf_token %}
+    <div class="input-group" style="max-width: 300px; margin: 0 auto;">
+      <input type="text" name="secret_key" class="form-style" placeholder="Enter Secret Key" style="border-radius: 4px 0 0 4px;">
+      <div class="input-group-append">
+        <button type="submit" class="btn btn-success" style="border-radius: 0;">Search</button>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="row">
+  {% for bot in all_bots %}
+  <div class="col-md-6 mb-4">
+    <div class="card card-3d-wrap" style="height: 1200px;">
+      <div class="card-front">
+        <div class="center-wrap">
+          <!-- Display messages here -->
+          {% if messages %}
+            <ul class="messages">
+              {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+          <h4>Bot Configuration</h4>
+          <p>Bot ID: {{ bot.uuid }}</p>
+          <p>Mode: {{ bot.mode }}</p>
+          <p>Secret: {{ bot.pub_secret_key }}</p>
+          <p>Source Asset: {{ bot.from_asset_code }} ({{ bot.from_asset_issuer }})</p>
+          <p>Amount 1 [Strict-Send -> Source Amount , Strict-Receive -> Min To Receive] : {{ bot.amount1 }}</p>
+          <p>Destination Asset: {{ bot.dest_asset_code }} ({{ bot.dest_asset_issuer }})</p>
+          <p>Amount 2 [Strict-Send -> Min To Receive , Strict-Receive -> Max Send] : {{ bot.amount2 }}</p>
+          <p>Destination Account: {{ bot.destination_account }}</p>
+          <p>Custom Path: {{ bot.custom_path }}</p>
+          <p>Deposit Liquidity Amount For A Asset: {{ bot.deposit_liquidity_asset_a_max_amount }}</p>
+          <p>Deposit Liquidity Amount For B Asset: {{ bot.deposit_liquidity_asset_b_max_amount }}</p>
+          <p>Withdraw Liquidity Amount: {{ bot.withdraw_liquidity_Amount }}</p>
+          <p>Withdraw Liquidity Amount For A Asset: {{ bot.withdraw_min_amount_A }}</p>
+          <p>Withdraw Liquidity Amount For B Asset: {{ bot.withdraw_min_amount_B }}</p>
+          
+          <!-- Buttons for View Logs and Stop Bot -->
+          <div class="text-center mt-3">
+            <a href="{% url 'view_logs2' bot.uuid %}" class="btn btn-primary btn-block">View Logs</a>
+            <a href="{% url 'clone2' %}?bot_uuid={{ bot.uuid }}" class="btn btn-success btn-block">Clone Bot</a>
+            <form method="post" action="{% url 'stop_bot2' %}" style="display: inline-block; margin-top: 5px; margin-left: 10px;">
+              {% csrf_token %}
+              <input type="hidden" name="bot_uuid" value="{{ bot.uuid }}">
+              <button type="submit" class="btn btn-danger">Stop Bot</button>
+            </form>
+            <form method="post" action="{% url 'start_bot2' %}" style="display: inline-block; margin-top: 5px; margin-left: 10px;">
+              {% csrf_token %}
+              <input type="hidden" name="bot_uuid" value="{{ bot.uuid }}">
+              <button type="submit" class="btn btn-primary">Start Bot</button>
+            </form>
+              <form method="post" action="{% url 'remove_bot2' %}" style="display: inline-block; margin-top: 5px; margin-left: 10px;">
+              {% csrf_token %}
+              <input type="hidden" name="bot_uuid" value="{{ bot.uuid }}">
+              <button type="submit" class="btn btn-primary">Delete Bot</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

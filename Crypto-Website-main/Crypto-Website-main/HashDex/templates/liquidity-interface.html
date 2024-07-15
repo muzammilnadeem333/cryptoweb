@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Custom Path Configuration{% endblock %}
+
+{% block content %}
+<section class="text-center">
+  <div class="section">
+    <div class="container">
+      <div class="row full-height justify-content-center">
+        <div class="col-12 text-center align-self-center py-5">
+          <div class="section pb-5 pt-5 pt-sm-2 text-center">
+            <h6 class="mb-0 pb-3">HashDex Portal</h6>
+            <div class="card-3d-wrap mx-auto" style="width: 400px; height: auto;">
+              <div class="card-3d-wrapper">
+                <div class="card-front">
+                  <div class="center-wrap">
+                    <div class="section text-center">
+                      <h4 class="mb-4 pb-3">Wanna Check Liquidity Between Assets</h4>
+                      <form method="post" action="{% url 'get_res' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                          <label for="asset1">Asset 1 Code:</label>
+                          <input type="text" class="form-control" id="asset1" name="asset1" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="asset1_issuer">Asset 1 Issuer:</label>
+                          <input type="text" class="form-control" id="asset1_issuer" name="asset1_issuer" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="asset2">Asset 2 Code:</label>
+                          <input type="text" class="form-control" id="asset2" name="asset2" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="path2_issuer">Asset 2 Issuer:</label>
+                          <input type="text" class="form-control" id="asset2_issuer" name="asset2_issuer" required>
+                        </div>
+                        <div class="text-center mt-3">
+                          <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

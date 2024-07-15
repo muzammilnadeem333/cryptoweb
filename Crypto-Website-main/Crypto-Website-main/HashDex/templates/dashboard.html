@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block extrastyles %}
+<style>
+  /* Add any additional styles specific to the dashboard here */
+  .dashboard-card {
+    background-color: #2a2b38;
+    color: #c4c3ca;
+    border-radius: 6px;
+    padding: 20px;
+    margin: 10px;
+    box-shadow: 0 4px 8px 0 rgba(21, 21, 21, 0.2);
+  }
+  
+  .dashboard-card h4 {
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  
+  .dashboard-card button {
+    background-color: #ffeba7;
+    color: #102770;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  
+  .dashboard-card button:hover {
+    background-color: #102770;
+    color: #ffeba7;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="text-center">
+    <div class="section">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-5">
+            <div class="dashboard-card">
+              <h4>Check Stellar Account</h4>
+              <a href="/account_checker">
+                <button>Go</button>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="dashboard-card">
+              <h4>Run Bots</h4>
+              <a href="/run_bot">
+                <button>Go</button>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="dashboard-card">
+              <h4>Check Running Bots</h4>
+              <a href="/run_bot/get_running_bots/">
+                <button>Go</button>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="dashboard-card">
+              <h4>Liquidity Pools</h4>
+              <a href="/liquidity/">
+                <button>Go</button>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="dashboard-card">
+              <h4>Deposite Liquidity Pools</h4>
+              <a href="/liquidity/deposit/">
+                <button>Go</button>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="dashboard-card">
+              <h4>Withdraw Liquidity Pools</h4>
+              <a href="/liquidity/withdraw/">
+                <button>Go</button>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="dashboard-card">
+              <h4>Calculate Liquidity Pool ID</h4>
+              <a href="/liquidity/calculateID/">
+                <button>Go</button>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="dashboard-card">
+              <h4>Establish Pool Trust</h4>
+              <a href="/liquidity/establish_pool_share/">
+                <button>Go</button>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="dashboard-card">
+              <h4>MULTI TRANSACTION BOT [ BETA ]</h4>
+              <a href="/run_bot/multi_transaction_bot/">
+                <button>Go</button>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="dashboard-card">
+              <h4>Check Running Multiple Transaction Bots</h4>
+              <a href="/run_bot/multi_operational_running_bots/">
+                <button>Go</button>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="dashboard-card">
+              <h4>Create Manage Sell Offers</h4>
+              <a href="/offers/manage_sell_offers">
+                <button>Go</button>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="dashboard-card">
+              <h4>Create Manage Buy Offers</h4>
+              <a href="/offers/manage_buy_offers">
+                <button>Go</button>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="dashboard-card">
+              <h4>Bulk Converter</h4>
+              <a href="/account_checker/claim_balances/">
+                <button>Go</button>
+              </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+{% endblock %}

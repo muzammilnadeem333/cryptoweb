@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Liquidity Pool Information{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2>Liquidity Pool Information</h2>
+  {% if error_message %}
+    <p class="alert alert-danger">{{ error_message }}</p>
+  {% else %}
+    <p>Liquidity Pool ID: {{ liquidity_pool_data.id }}</p>
+    <p>Fee (basis points): {{ liquidity_pool_data.fee_bp }}</p>
+    <p>Total Trustlines: {{ liquidity_pool_data.total_trustlines }}</p>
+    <p>Total Shares: {{ liquidity_pool_data.total_shares }}</p>
+    <p>Reserves:</p>
+    <ul>
+      {% for reserve in liquidity_pool_data.reserves %}
+        <li>Asset: {{ reserve.asset }}</li>
+        <li>Amount: {{ reserve.amount }}</li>
+      {% endfor %}
+    </ul>
+    <a href="/liquidity/" target="_blank">
+      <button id="Liquidity" class="btn btn-primary">Check New</button>
+    </a>
+  {% endif %}
+</div>
+
+<script>
+  // JavaScript function to reload the page after 4 seconds
+  setTimeout(function() {
+    location.reload();
+  }, 4000); // 4000 milliseconds = 4 seconds
+</script>
+{% endblock %}

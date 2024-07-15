@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}View Bot Logs{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Bot Logs for {{ bot.uuid }}</h2>
+    <p>Mode: {{ bot.mode }}</p>
+    <p>Secret: {{ bot.pub_secret_key }}</p>
+    <p>Source Asset: {{ bot.from_asset_code }} ({{ bot.from_asset_issuer }})</p>
+    <p>Destination Asset: {{ bot.dest_asset_code }} ({{ bot.dest_asset_issuer }})</p>
+    <p>Amount 1 [Strict-Send -> Source Amount , Strict-Receive -> Min To Receive] : {{ bot.amount1 }}</p>
+    <p>Amount 2 [Strict-Send -> Min To Receive , Strict-Receive -> Max Send] : {{ bot.amount2 }}</p>
+    <p>Destination Account: {{ bot.destination_account }}</p>
+
+     <h4>LOGS</h4>
+    <div class="mt-4">
+        <iframe srcdoc="<style>pre { color: white; }</style><pre>{{ logs }}</pre>" width="100%" height="500px" frameborder="0" scrolling="auto"></iframe>
+    </div>
+</div>
+{% endblock %}

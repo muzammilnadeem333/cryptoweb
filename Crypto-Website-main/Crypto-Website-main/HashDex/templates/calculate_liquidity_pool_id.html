@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}DEPOSIT IN LIQUIDITY POOL{% endblock %}
+
+{% block content %}
+    <h1>CALCULATE LIQUIDITY ID</h1>
+    <form action="{% url 'calculate_liquidity_pool' %}" method="post">
+        {% csrf_token %}
+        
+        <!-- Asset A Code and Issuer -->
+        <div class="form-group">
+            <label for="asset_code_a">Asset A Code:</label>
+            <input type="text" class="form-control" id="asset_code_a" name="asset_code_a" required>
+        </div>
+        <div class="form-group">
+            <label for="asset_issuer_a">Asset A Issuer:</label>
+            <input type="text" class="form-control" id="asset_issuer_a" name="asset_issuer_a" required>
+        </div>
+        
+        <!-- Asset B Code and Issuer -->
+        <div class="form-group">
+            <label for="asset_code_b">Asset B Code:</label>
+            <input type="text" class="form-control" id="asset_code_b" name="asset_code_b" required>
+        </div>
+        <div class="form-group">
+            <label for="asset_issuer_b">Asset B Issuer:</label>
+            <input type="text" class="form-control" id="asset_issuer_b" name="asset_issuer_b" required>
+        </div>
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    {% if messages %}
+<div class="alert alert-danger mt-3">
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}

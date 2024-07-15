@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block extrastyles %}
+<style>
+  /* Additional CSS styles for cards */
+  .result-card {
+    background-color: #2a2b38;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    color: #c4c3ca;
+  }
+
+  .section-header {
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+
+  .section-body {
+    display: none;
+  }
+
+  .collapsible.active + .section-body {
+    display: block;
+  }
+
+  .icon {
+    margin-left: 5px;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .collapsible.active .icon {
+    transform: rotate(180deg);
+  }
+
+  .card {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+  }
+
+  .separator {
+    margin: 10px 0;
+    height: 1px;
+    background-color: #c4c3ca;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  {% for account in results %}
+  <div class="result-card">
+    <div class="section-header collapsible">
+      <h2>Account Details:</h2>
+      <p>Account public key: {{ account.account_public_key }}</p>
+      <p>Account secret key: {{ account.account_secret_key }}</p>
+    </div>
+
+    <div class="section-header collapsible">
+      <h2 class="collapsible">Latest Payments <i class="icon fas fa-caret-down"></i></h2>
+      <div class="section-body content">
+        <!-- Payments collapsible content -->
+        {% for payment in account.payments %}
+        <div class="card" style="background: #1f2029">
+          <p>Payment ID: {{ payment.id }}</p>
+          <p>Amount: {{ payment.amount }}</p>
+          <p>Source Asset: {{ payment.source_asset_code }}</p>
+          <p>Source Asset Amount: {{ payment.source_asset_amount }}</p>
+          <p>Destination Asset: {{ payment.destination_asset_code }}</p>
+          <p>Destination Asset Amount: {{ payment.destination_asset_amount }}</p>
+          <p>Date: {{ payment.created_at }}</p>
+        </div>
+        <div class="separator"></div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="section-header collapsible">
+      <h2 class="collapsible">Account Balances <i class="icon fas fa-caret-down"></i></h2>
+      <div class="section-body content">
+        <!-- Account balances collapsible content -->
+        <ul>
+          {% for balance in account.balances %}
+          <li>Asset: {{ balance.asset | safe }}, Balance: {{ balance.balance | safe }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-header collapsible">
+      <h2 class="collapsible">Claimable Balances <i class="icon fas fa-caret-down"></i></h2>
+      <div class="section-body content">
+        <!-- Claimable balances collapsible content -->
+        <ul>
+          {% for claimable_balance in account.claimable_balances %}
+          <li>Amount: {{ claimable_balance.amount | safe }}</li>
+          <li>Asset Code: {{ claimable_balance.asset_code | safe }}</li>
+          <li>Issuer: {{ claimable_balance.issuer | safe }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const collapsibles = document.querySelectorAll('.collapsible');
+
+    collapsibles.forEach((collapsible) => {
+      collapsible.addEventListener('click', () => {
+        collapsible.classList.toggle('active');
+        const content = collapsible.nextElementSibling;
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+      });
+    });
+  });
+</script>
+<script>
+  // Get the search query from the URL parameter
+  const urlParams = new URLSearchParams(window.location.search);
+  const searchQuery = urlParams.get('query');
+
+  // Highlight search query in the search results
+  if (searchQuery) {
+    const highlight = (element, query) => {
+      const innerHTML = element.innerHTML;
+      const regex = new RegExp(query, 'gi'); // 'gi' means global and case-insensitive
+      element.innerHTML = innerHTML.replace(regex, `<span class="highlight">$&</span>`);
+    };
+
+    const elementsToHighlight = document.querySelectorAll('.result-card');
+    elementsToHighlight.forEach((element) => {
+      highlight(element, searchQuery);
+    });
+  }
+</script>
+{% endblock %}
