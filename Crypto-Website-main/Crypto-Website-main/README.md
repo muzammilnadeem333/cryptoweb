@@ -75,7 +75,7 @@ HASHDex is a specialized client tailored for the Stellar network exchange, provi
 
 1. Clone the repository:
     
-    https://github.com/muzammilnadeem333/cryptoweb/tree/main
+    https://github.com/muzammilnadeem333/cryptoweb/tree/main/Crypto-Website-main/Crypto-Website-main
     
 2. Install dependencies:
     
